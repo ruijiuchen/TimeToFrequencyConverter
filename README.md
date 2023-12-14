@@ -1,11 +1,10 @@
 # GetSimulatedDataTool
 Where to download the code:
-
+ git clone  https://github.com/ruijiuchen/GetSimulatedDataTool.git
 
 How to install:
 /GetSimulatedDataTool$ pip install ./
 
 How to execute the code:
-before execute the code, make sure the paths in the file "pathsettings.toml"
-is correct.
-GetSimulatedDataTool$ GetSimulatedDataTool out***.root
+
+GetSimulatedDataTool$ GetSimulatedDataTool out485.root 147
