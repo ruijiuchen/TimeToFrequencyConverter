@@ -1,0 +1,2 @@
+[console_scripts]
+GetSimulatedDataTool = GetSimulatedDataTool.__main__:main
