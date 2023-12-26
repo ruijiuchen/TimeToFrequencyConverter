@@ -1,9 +1,0 @@
-# This is the path setting file
-
-[paths]
-default_path_ntcap_iq = "***"
-default_path_luster_iq = "***"
-default_path_ntcap_sc = "***"
-default_path_luster_sc = "***"
-
-

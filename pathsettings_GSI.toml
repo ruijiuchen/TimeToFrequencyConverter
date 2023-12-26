@@ -1,9 +1,0 @@
-# pathsettings_GSI.toml
-
-[paths]
-default_path_ntcap_iq = "/mnt/ntcap-data2/208Bi/iq/IQ_2023-07-31_11-54-32"
-default_path_luster_iq = "litv-exp@lxbk0499.gsi.de:/lustre/astrum/rchen/ntcap_copy_test/iq/IQ_2023-07-31_11-54-32"
-default_path_ntcap_sc = "/mnt/ntcap-data2/208Bi/sc/IQ_2023-07-31_11-54-32"
-default_path_luster_sc = "litv-exp@lxbk0499.gsi.de:/lustre/astrum/rchen/ntcap_copy_test/sc/IQ_2023-07-31_11-54-32"
-
-
