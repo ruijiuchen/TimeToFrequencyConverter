@@ -83,13 +83,14 @@ class TimeToFrequencyConverter:
              except (ValueError, IndexError, TypeError) as e:
                  print(f"### Error processing line: {line.strip()}. Details: {e}")    
                  
-    def generate_sampling_amplitudes(self, sample_rate=20e6, signal_width = 100e-12):
+    def generate_sampling_amplitudes(self, sample_rate=20e6, signal_width = 100e-12, noise_level = 0):
         """
         Generate sampling signal based on simulated data.
     
         Parameters:
         - sample_rate (float): Sampling rate in Hertz. Default is 20MHz.
         - signal_width: width of gaussion function
+        - noise_level: noise level
 
         Returns:
         - sampling_amplitudes, a list of sampling amplitutde.
@@ -116,9 +117,8 @@ class TimeToFrequencyConverter:
                 self.sampling_amplitudes[i] = self.sampling_amplitudes[i] + sampling_amplitude
         # add white noise to sampling signal
         for i in range (0, len(self.sampling_amplitudes)):
-            a, b = 0, 1
-            random_integer = random.randint(a, b)*(1 / (np.sqrt(2 * np.pi) * signal_width))*0.01
-            self.sampling_amplitudes[i] = self.sampling_amplitudes[i] + random_integer
+            random_number = random.random()*noise_level
+            self.sampling_amplitudes[i] = self.sampling_amplitudes[i] + random_number
     
     def generate_sampling_amplitudes_sin(self,sample_rate):
         """
@@ -258,7 +258,7 @@ class TimeToFrequencyConverter:
         self.h_fft_result_frequencies.GetYaxis().SetTitleOffset(0.8)
         self.canvas.Update()
         
-    def run(self, sampling_method,sample_rate, signal_width, plot_opt, plot_time_min, plot_time_max, plot_fre_min, plot_fre_max, start_step, SimulatedDataFile, TOF):
+    def run(self, sampling_method,sample_rate, signal_width,  noise_level, plot_opt, plot_time_min, plot_time_max, plot_fre_min, plot_fre_max, start_step, SimulatedDataFile, TOF):
         """
         Run the TimeToFrequencyConverter.
 
@@ -266,6 +266,7 @@ class TimeToFrequencyConverter:
         sampling_method (int): The method used for sampling.
         sample_rate (float): The sampling rate in Hertz.
         signal_width (float): The width of the signal in seconds.
+        noise_level (float): The amplitude of noise level.
         plot_opt (int): The plotting option.
         plot_time_min (float): The minimum time for plotting.
         plot_time_max (float): The maximum time for plotting.
@@ -294,7 +295,7 @@ class TimeToFrequencyConverter:
             if sampling_method == 1:
                 self.generate_sampling_amplitudes_sin(sample_rate)
             else:
-                self.generate_sampling_amplitudes(sample_rate, signal_width)
+                self.generate_sampling_amplitudes(sample_rate, signal_width, noise_level)
             end_time1 = time.time()  # Record the end time
             runtime1 = end_time1 - start_time1
             np.save("sampling_amplitudes.npy", self.sampling_amplitudes)
