@@ -18,13 +18,37 @@ class TimeToFrequencyConverter:
         self.h_fft_result_frequencies = TH1F()
         
     def load_sampling_amplitudes(self):
-        self.sampling_amplitudes = np.load("sampling_amplitudes.npy")
-        
+        try:
+            self.sampling_amplitudes = np.load("sampling_amplitudes.npy")
+            return True
+        except FileNotFoundError:
+            print("### Error: File 'sampling_amplitudes.npy' not found.")
+            return False
+        except Exception as e:
+            print(f"### Error loading 'sampling_amplitudes.npy': {e}")
+            return False
+    
     def load_frequencies(self):
-        self.frequencies = np.load("frequencies.npy")
+        try:
+            self.frequencies = np.load("frequencies.npy")
+            return True
+        except FileNotFoundError:
+            print("### Error: File 'frequencies.npy' not found.")
+            return False
+        except Exception as e:
+            print(f"### Error loading 'frequencies.npy': {e}")
+            return False
         
     def load_fft_result(self):
-        self.fft_result = np.load("fft_result.npy")
+        try:
+            self.fft_result = np.load("fft_result.npy")
+            return True
+        except FileNotFoundError:
+            print("### Error: File 'fft_result.npy' not found.")
+            return False
+        except Exception as e:
+            print(f"### Error loading 'fft_result.npy': {e}")
+            return False
         
     def ReadTimeData_root(self,SimulatedDataFile,TOF):
         """
@@ -336,28 +360,35 @@ class TimeToFrequencyConverter:
             print("-step 3. Plot the spectrum and save results.")
             start_time3 = time.time()  # Record the end time
             # Load sampling_amplitudes from binary file
-            if start_step == 3:
-                self.load_sampling_amplitudes()
-                self.load_frequencies()
-                self.load_fft_result()
-                
-            self.plot_spectrum(sample_rate,plot_time_min,plot_time_max,plot_fre_min,plot_fre_max, plot_opt)
-
-            self.canvas.Print("plot_spectrum.png")
-            fout = TFile("plot_spectrum.root","recreate")
-            self.canvas.Write()
-            self.g_sampling_amplitude_time.Write()
-            self.h_fft_result_frequencies.Write()
-            fout.Close()
+            flag_data1 = True
+            flag_data2 = True
+            flag_data3 = True
             
+            if start_step == 3:
+                flag_data1 = self.load_sampling_amplitudes()
+                flag_data2 = self.load_frequencies()
+                flag_data3 = self.load_fft_result()
+                
+            if flag_data1==True and flag_data2==True and flag_data3==True:
+                self.plot_spectrum(sample_rate,plot_time_min,plot_time_max,plot_fre_min,plot_fre_max, plot_opt)
+                self.canvas.Print("plot_spectrum.png")
+                fout = TFile("plot_spectrum.root","recreate")
+                self.canvas.Write()
+                self.g_sampling_amplitude_time.Write()
+                self.h_fft_result_frequencies.Write()
+                fout.Close()
+            else:
+                print("No data exist for plot. Please press Run bottom first!")
+                return False
             
             end_time3 = time.time()  # Record the end time
             runtime3 = end_time3 - start_time3
             print(f"Runtime: {runtime3:.4f} seconds")
             table.add_row(["3.Plotting Spectrum", f"{runtime3:.4f}"])
-            
+                
         end_time = time.time()  # Record the end time
         total_runtime = end_time - start_time
         print(f"Total total_runtime: {total_runtime:.4f} seconds")
         table.add_row(["4.Total Runtime", f"{total_runtime:.4f}"])
         print(table)
+        return True

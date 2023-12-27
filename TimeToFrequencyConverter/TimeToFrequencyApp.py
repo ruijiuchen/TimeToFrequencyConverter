@@ -133,8 +133,9 @@ class TimeToFrequencyApp:
         plot_button = ttk.Button(main_frame, text="Re-Plot", command=self.plot_worker)
         plot_button.grid(row=index_row, column=1)
         
-    def open_file(self):
-        file_path = filedialog.askopenfilename(title="Open Parameter File", filetypes=[("TOML files", "*.toml")])
+    def open_file(self, file_path=None):
+        if file_path==None:
+            file_path = filedialog.askopenfilename(title="Open Parameter File", filetypes=[("TOML files", "*.toml")])
         if file_path:
             try:
                 with open(file_path, "r") as toml_file:
@@ -158,10 +159,11 @@ class TimeToFrequencyApp:
                     # entry_sampling_method.delete(0, tk.END)
                     # entry_sampling_method.insert(0, self.sampling_method_var.get())
                     # Repeat for other parameters
-            
+                    return True
             except Exception as e:
                 print(f"Error while loading parameters: {e}")
-
+                return False
+            
     def save_file(self):
         file_path = filedialog.asksaveasfilename(title="Save Parameter File", defaultextension=".toml", filetypes=[("TOML files", "*.toml")])
         if file_path:
