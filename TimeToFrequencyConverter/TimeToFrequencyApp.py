@@ -50,7 +50,7 @@ class TimeToFrequencyApp:
         #main_frame.geometry("500x300")  # Adjust the width and height as needed
         # Set the size of the main frame
         main_frame.grid_propagate(False)  # Disable size propagation
-        main_frame.config(width=250, height=230)  # Set the desired size
+        main_frame.config(width=250, height=250)  # Set the desired size
 
         # Create a menu bar
         menu_bar = tk.Menu(self.root)
@@ -188,7 +188,9 @@ class TimeToFrequencyApp:
             except Exception as e:
                 print(f"Error while saving parameters: {e}")
     
-            
+            finally:
+                print("Saved!")
+                
     def run_worker(self):
         # Update the ROOT plot
         start_step=1
