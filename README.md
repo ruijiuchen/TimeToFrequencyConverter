@@ -12,6 +12,7 @@ To download the code, use the following command in your terminal:
 
 After downloading the code, navigate to the project directory and install the required dependencies using:
 
+    pip install -r requirements.txt
     pip install ./
 
 ## 3. Executing the Code
