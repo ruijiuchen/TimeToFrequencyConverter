@@ -2,19 +2,19 @@
 
 This repository contains a Time to Frequency Converter tool that allows users to perform various operations related to time and frequency conversion. Below are instructions on how to download, install, and execute the code.
 
-[1. Downloading the Code]
+##[1. Downloading the Code]
 
 To download the code, use the following command in your terminal:
 
-   git clone https://github.com/ruijiuchen/TimeToFrequencyConverter.git
+   	    git clone https://github.com/ruijiuchen/TimeToFrequencyConverter.git
 
-[2. Installation]
+##[2. Installation]
 
 After downloading the code, navigate to the project directory and install the required dependencies using:
 
     pip install ./
 
-[3. Executing the Code]
+##[3. Executing the Code]
 
 Once installed, you can execute the Time to Frequency Converter by running the following command:
 
