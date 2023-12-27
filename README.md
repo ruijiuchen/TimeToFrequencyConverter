@@ -6,7 +6,7 @@ This repository contains a Time to Frequency Converter tool that allows users to
 
 To download the code, use the following command in your terminal:
 
-   git clone https://github.com/ruijiuchen/TimeToFrequencyConverter.git
+    git clone https://github.com/ruijiuchen/TimeToFrequencyConverter.git
 
 ## 2. Installation
 
