@@ -1,6 +1,7 @@
 import sys
 import time
 import numpy as np
+import random
 from ROOT import TCanvas, gROOT, TGraph, TApplication,TH1F, gPad, gStyle, TFile
 from prettytable import PrettyTable
 import argparse
@@ -95,7 +96,6 @@ class TimeToFrequencyConverter:
         """
         time_step = 1/ sample_rate
         sampling_time_max = self.simulated_data_list[-1]
-        #print("simulated_data_list:",self.simulated_data_list)
         sampling_points = int(sampling_time_max/time_step)
         print("time_step:",time_step," sampling_points:",sampling_points)
         self.sampling_amplitudes = [0] * sampling_points
@@ -114,7 +114,11 @@ class TimeToFrequencyConverter:
                 sampling_time = i * time_step
                 sampling_amplitude = (1 / (np.sqrt(2 * np.pi) * signal_width)) * np.exp(-0.5 * ((sampling_time - center_time) / signal_width) ** 2)
                 self.sampling_amplitudes[i] = self.sampling_amplitudes[i] + sampling_amplitude
-        
+        # add white noise to sampling signal
+        for i in range (0, len(self.sampling_amplitudes)):
+            a, b = 0, 1
+            random_integer = random.randint(a, b)*(1 / (np.sqrt(2 * np.pi) * signal_width))*0.01
+            self.sampling_amplitudes[i] = self.sampling_amplitudes[i] + random_integer
     
     def generate_sampling_amplitudes_sin(self,sample_rate):
         """
