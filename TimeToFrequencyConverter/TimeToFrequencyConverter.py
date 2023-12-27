@@ -37,6 +37,7 @@ class TimeToFrequencyConverter:
         - simulated_data_list: A list of simulation values.
         """
         print("SimulatedDataFile:", SimulatedDataFile, " TOF:",TOF)
+        
         file = TFile(SimulatedDataFile)
         #file.ls()
         t = file.Get("t")
@@ -51,7 +52,10 @@ class TimeToFrequencyConverter:
                 if t.Turn < 10:
                     print(" Turn= ",t.Turn, " point ",t.Point," time = ","%20.6f"%t.time," x = ", "%10.6f"%t.BE_X," y = ", "%10.6f"%t.BE_Y)
                 self.simulated_data_list.insert(i,t.time/1e12)
-  
+        if len(self.simulated_data_list) == 0:
+            return False
+        return True
+
     def ReadTimeData(self,SimulatedDataFile):
         """
         Read time data from a file and convert it to a list of values.
@@ -67,10 +71,10 @@ class TimeToFrequencyConverter:
                 lines = file.readlines()
         except FileNotFoundError:
             print(f"### Error: File '{SimulatedDataFile}' not found.")
-            sys.exit(1)
+            return False
         except Exception as e:
             print(f"### Error opening file '{SimulatedDataFile}': {e}")
-            sys.exit(1)
+            return False
         #for line in lines:
         for line_num, line in enumerate(lines):
              try:
@@ -81,8 +85,12 @@ class TimeToFrequencyConverter:
                  # Append simulated_data to the list
                  self.simulated_data_list.append(simulated_data)
              except (ValueError, IndexError, TypeError) as e:
-                 print(f"### Error processing line: {line.strip()}. Details: {e}")    
-                 
+                 print(f"### Error processing line: {line.strip()}. Details: {e}")
+                 return False
+        if len(simulated_data) == 0:
+            return False
+        return True
+    
     def generate_sampling_amplitudes(self, sample_rate=20e6, signal_width = 100e-12, noise_level = 0):
         """
         Generate sampling signal based on simulated data.
@@ -158,7 +166,7 @@ class TimeToFrequencyConverter:
         # Calculate the frequencies corresponding to the FFT result
         self.frequencies = np.fft.fftfreq(num_samples, 1.0 / sample_rate)
         
-    def plot_spectrum(self, sample_rate, plot_time_min, plot_time_max,plot_fre_min, plot_fre_max, plot_opt):
+    def plot_spectrum(self, sample_rate, plot_time_min, plot_time_max, plot_fre_min, plot_fre_max, plot_opt):
         """
         Plot the frequency spectrum.
     
@@ -181,12 +189,11 @@ class TimeToFrequencyConverter:
         self.g_sampling_amplitude_time.SetName("g_sampling_amplitude_time")
         title = "sampling signal with sampling rate" + str(sample_rate)
         self.g_sampling_amplitude_time.SetTitle(title)
-        #self.g_sampling_amplitude_time.Clear()
         self.g_sampling_amplitude_time.Set(0)  # Clear the data points
         if plot_opt == 2:
             time_step = 1 / sample_rate
             index_plot_time_min = int(plot_time_min/time_step)
-            index_plot_time_max = int(plot_time_max/time_step)
+            index_plot_time_max = min(int(plot_time_max/time_step), len(self.sampling_amplitudes))
             for i in range(index_plot_time_min, index_plot_time_max):
                 sampling_time = i * time_step*1e9
                 self.g_sampling_amplitude_time.SetPoint(i-index_plot_time_min, sampling_time, self.sampling_amplitudes[i])
@@ -287,11 +294,20 @@ class TimeToFrequencyConverter:
         # Create a PrettyTable to display runtimes
         table = PrettyTable()
         table.field_names = ["Step", "Runtime (seconds)"]
-        
+
+        self.simulated_data_list=[]
+        self.sampling_amplitudes = []
+        self.frequencies = []
+        self.fft_result = []
+
         if start_step == 1:
             print("-step 1. Read simulated data and creating sampling signal.")
             start_time1 = time.time()  # Record the end time
             self.ReadTimeData_root(SimulatedDataFile, TOF)
+            if len(self.simulated_data_list) == 0:
+                print("Error: simulated_data_list is emplty. Please check the --SimulatedDataFile and  --TOF options.")
+                return False
+            
             if sampling_method == 1:
                 self.generate_sampling_amplitudes_sin(sample_rate)
             else:
