@@ -1,6 +1,6 @@
 [parameters]
 sampling_method = "2"
-sample_rate = 6000000.0
+sample_rate = 600000000
 signal_width = 1e-8
 plot_opt = 2
 plot_time_min = 0.0
