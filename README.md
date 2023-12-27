@@ -1,12 +1,12 @@
-# GetSimulatedDataTool
+# TimeToFrequencyConverter
 Where to download the code:
 
-      	 git clone  https://github.com/ruijiuchen/GetSimulatedDataTool.git
+      	 git clone https://github.com/ruijiuchen/TimeToFrequencyConverter.git
 
 How to install:
 
-       /GetSimulatedDataTool$ pip install ./
+       pip install ./
 
 How to execute the code:
 
-       GetSimulatedDataTool$ GetSimulatedDataTool out485.root 147
+       TimeToFrequencyConverter
