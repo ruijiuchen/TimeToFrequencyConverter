@@ -185,7 +185,7 @@ class TimeToFrequencyConverter:
         num_samples = len(self.sampling_amplitudes)
     
         # Perform FFT on the sampling_amplitudes
-        self.fft_result = np.abs(np.fft.fft(self.sampling_amplitudes))**2
+        self.fft_result = np.abs(np.fft.fft(self.sampling_amplitudes))
         
         # Calculate the frequencies corresponding to the FFT result
         self.frequencies = np.fft.fftfreq(num_samples, 1.0 / sample_rate)
