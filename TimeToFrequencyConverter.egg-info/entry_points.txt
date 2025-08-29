@@ -1,2 +1,0 @@
-[console_scripts]
-TimeToFrequencyConverter = TimeToFrequencyConverter.__main__:main
