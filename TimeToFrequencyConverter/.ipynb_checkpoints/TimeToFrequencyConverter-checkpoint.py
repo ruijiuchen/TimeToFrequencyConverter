@@ -185,7 +185,7 @@ class TimeToFrequencyConverter:
         num_samples = len(self.sampling_amplitudes)
     
         # Perform FFT on the sampling_amplitudes
-        self.fft_result = np.abs(np.fft.fft(self.sampling_amplitudes))
+        self.fft_result = np.abs(np.fft.fft(self.sampling_amplitudes))**2
         
         # Calculate the frequencies corresponding to the FFT result
         self.frequencies = np.fft.fftfreq(num_samples, 1.0 / sample_rate)
@@ -289,7 +289,7 @@ class TimeToFrequencyConverter:
         self.h_fft_result_frequencies.GetYaxis().SetTitleOffset(0.8)
         self.canvas.Update()
         
-    def run(self, sampling_method,sample_rate, signal_width,  noise_level, plot_opt, plot_time_min, plot_time_max, plot_fre_min, plot_fre_max, start_step, SimulatedDataFile, TOF):
+    def run(self, sampling_method,sample_rate, signal_width,  noise_level, plot_opt, plot_time_min, plot_time_max, plot_fre_min, plot_fre_max, start_step, SimulatedDataFile, TOF, OutputDataFile):
         """
         Run the TimeToFrequencyConverter.
 
@@ -305,7 +305,7 @@ class TimeToFrequencyConverter:
         plot_fre_max (float): The maximum frequency for plotting.
         start_step (int): The starting step for the conversion process.
         SimulatedDataFile (str): The file containing simulated data.
-
+        
         Returns:
         the ROOT canvas, 
         sampling amplitude graph, 
@@ -371,12 +371,14 @@ class TimeToFrequencyConverter:
                 
             if flag_data1==True and flag_data2==True and flag_data3==True:
                 self.plot_spectrum(sample_rate,plot_time_min,plot_time_max,plot_fre_min,plot_fre_max, plot_opt)
-                self.canvas.Print("plot_spectrum.png")
-                fout = TFile("plot_spectrum.root","recreate")
+                
+                fout = TFile(OutputDataFile,"recreate")
                 self.canvas.Write()
                 self.g_sampling_amplitude_time.Write()
                 self.h_fft_result_frequencies.Write()
                 fout.Close()
+                OutputDataFile_png = OutputDataFile.replace(".root", ".png")
+                self.canvas.Print(OutputDataFile_png)
             else:
                 print("No data exist for plot. Please press Run bottom first!")
                 return False
