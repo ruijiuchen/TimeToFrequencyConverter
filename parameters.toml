@@ -1,12 +1,13 @@
 [parameters]
 sampling_method = "2"
-sample_rate = 600000000
-signal_width = 1e-8
-noise_level = 1e6
+sample_rate = 20000000.0
+signal_width = 1.779e-5
+noise_level = 0.0
 plot_opt = 2
 plot_time_min = 0.0
-plot_time_max = 1.3e-6
-plot_fre_min = 0
-plot_fre_max = 2000000
-simulated_data = "out.root"
-TOF = 147
+plot_time_max = 1.0
+plot_fre_min = 0.0
+plot_fre_max = 2000000.0
+simulated_data = "output_pos_data-design1.csv"
+TOF = 214
+output = "result.root"

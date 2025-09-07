@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import scrolledtext
 from tkinter import filedialog
-import toml  # Add this import
+import toml
 from ROOT import TCanvas, gROOT, TGraph, TFile
 import numpy as np
 from . import TimeToFrequencyConverter as TFC
@@ -11,7 +11,16 @@ class TimeToFrequencyApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Time to frequency converter GUI")
-        
+      
+        # Configure ttk Style before creating widgets
+        self.style = ttk.Style()
+        # Switch to a theme that supports custom fonts (e.g., "clam" or "alt")
+        self.style.theme_use("clam")  # Try "clam", "alt", or "default"
+        # Configure font sizes (start with a smaller size like 20 to test)
+        self.style.configure("TButton", font=("Helvetica", 30))  # Reduced from 60 to 20 for testing
+        self.style.configure("TLabel", font=("Helvetica", 30))   # Reduced from 60 to 20
+        self.style.configure("TEntry", font=("Helvetica", 30))   # Reduced from 60 to 20
+
         # Initialize variables
         self.sampling_method_var = tk.StringVar()
         self.sample_rate_var = tk.DoubleVar()
@@ -24,9 +33,10 @@ class TimeToFrequencyApp:
         self.plot_fre_max_var = tk.DoubleVar()
         self.start_step_var = tk.IntVar()
         self.simulated_data_var = tk.StringVar()
+        self.output_var = tk.StringVar()
         self.tof_var = tk.IntVar()
-        
-        # Set default values (you can adjust these as needed)
+      
+        # Set default values
         self.sampling_method_var.set(0)
         self.sample_rate_var.set(0)
         self.signal_width_var.set(0)
@@ -38,109 +48,101 @@ class TimeToFrequencyApp:
         self.plot_fre_max_var.set(0)
         self.simulated_data_var.set("")
         self.tof_var.set(0)
-        
+      
         self.create_widgets()
         self.converter = TFC.TimeToFrequencyConverter()
-        
+      
     def create_widgets(self):
-        # Create and configure the main frame
+        # Create and configure the main frame with larger size
         main_frame = ttk.Frame(self.root)
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        # Set the width and height of the main frame explicitly
-        #main_frame.geometry("500x300")  # Adjust the width and height as needed
-        # Set the size of the main frame
-        main_frame.grid_propagate(False)  # Disable size propagation
-        main_frame.config(width=250, height=250)  # Set the desired size
+        main_frame.grid_propagate(False)
+        main_frame.config(width=500, height=500)  # Increased size to accommodate larger fonts
 
         # Create a menu bar
         menu_bar = tk.Menu(self.root)
         self.root.config(menu=menu_bar)
-
-        # Create a "File" menu
         file_menu = tk.Menu(menu_bar, tearoff=0)
         menu_bar.add_cascade(label="File", menu=file_menu)
-        
-        # Add "Open" option to the "File" menu
         file_menu.add_command(label="Open", command=self.open_file)
-        
-        # Add "Save" option to the "File" menu
         file_menu.add_command(label="Save", command=self.save_file)
-
         index_row = 0
-        
-        # Create input fields
-        ttk.Label(main_frame, text="Sampling Method").grid(row=index_row, column=0, sticky=tk.W)
+      
+        # Create input fields with ttk controls
+        ttk.Label(main_frame, text="Sampling Method[1.sin/2.exp/3.gaus]").grid(row=index_row, column=0, sticky=tk.W)
         sampling_method_entry = ttk.Entry(main_frame, textvariable=self.sampling_method_var)
         sampling_method_entry.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
         ttk.Label(main_frame, text="Sampling Rate [Hz]").grid(row=index_row, column=0, sticky=tk.W)
         sample_rate_entry = ttk.Entry(main_frame, textvariable=self.sample_rate_var)
         sample_rate_entry.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
-        ttk.Label(main_frame, text="Signal Width").grid(row=index_row, column=0, sticky=tk.W)
+        ttk.Label(main_frame, text="Signal Width [s]").grid(row=index_row, column=0, sticky=tk.W)
         signal_width_entry = ttk.Entry(main_frame, textvariable=self.signal_width_var)
         signal_width_entry.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
         ttk.Label(main_frame, text="noise level").grid(row=index_row, column=0, sticky=tk.W)
         noise_level_entry = ttk.Entry(main_frame, textvariable=self.noise_level_var)
         noise_level_entry.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
-        ttk.Label(main_frame, text="Simulation Data").grid(row=index_row, column=0, sticky=tk.W)
+        ttk.Label(main_frame, text="Simulation Data[.cvs/.root]").grid(row=index_row, column=0, sticky=tk.W)
         simulated_data_entry = ttk.Entry(main_frame, textvariable=self.simulated_data_var)
         simulated_data_entry.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
-        ttk.Label(main_frame, text="TOF[point]").grid(row=index_row, column=0, sticky=tk.W)
+        ttk.Label(main_frame, text="TOF [point]").grid(row=index_row, column=0, sticky=tk.W)
         tof_entry = ttk.Entry(main_frame, textvariable=self.tof_var)
         tof_entry.grid(row=index_row, column=1)
-        
-        # Create a button to run the code
-        index_row=index_row+1
+        index_row += 1
+
+        ttk.Label(main_frame, text="Output [***.root]").grid(row=index_row, column=0, sticky=tk.W)
+        output_entry = ttk.Entry(main_frame, textvariable=self.output_var)
+        output_entry.grid(row=index_row, column=1)
+        index_row += 1
+
         run_button = ttk.Button(main_frame, text="Run", command=self.run_worker)
         run_button.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
-        ttk.Label(main_frame, text="Plot Option").grid(row=index_row, column=0, sticky=tk.W)
+        ttk.Label(main_frame, text="Plot Option[1/2/3]").grid(row=index_row, column=0, sticky=tk.W)
         plot_opt_entry = ttk.Entry(main_frame, textvariable=self.plot_opt_var)
         plot_opt_entry.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
-        ttk.Label(main_frame, text="Plot Time Min").grid(row=index_row, column=0, sticky=tk.W)
+        ttk.Label(main_frame, text="Plot Time Min [s]").grid(row=index_row, column=0, sticky=tk.W)
         plot_time_min_entry = ttk.Entry(main_frame, textvariable=self.plot_time_min_var)
         plot_time_min_entry.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
-        ttk.Label(main_frame, text="Plot Time Max").grid(row=index_row, column=0, sticky=tk.W)
+        ttk.Label(main_frame, text="Plot Time Max [s]").grid(row=index_row, column=0, sticky=tk.W)
         plot_time_max_entry = ttk.Entry(main_frame, textvariable=self.plot_time_max_var)
         plot_time_max_entry.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
-        ttk.Label(main_frame, text="Plot Frequency Min").grid(row=index_row, column=0, sticky=tk.W)
+        ttk.Label(main_frame, text="Plot Frequency Min [Hz]").grid(row=index_row, column=0, sticky=tk.W)
         plot_fre_min_entry = ttk.Entry(main_frame, textvariable=self.plot_fre_min_var)
         plot_fre_min_entry.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
-        ttk.Label(main_frame, text="Plot Frequency Max").grid(row=index_row, column=0, sticky=tk.W)
+        ttk.Label(main_frame, text="Plot Frequency Max [Hz]").grid(row=index_row, column=0, sticky=tk.W)
         plot_fre_max_entry = ttk.Entry(main_frame, textvariable=self.plot_fre_max_var)
         plot_fre_max_entry.grid(row=index_row, column=1)
+        index_row += 1
 
-        index_row=index_row+1
-        # Create a button to plot the result
         plot_button = ttk.Button(main_frame, text="Re-Plot", command=self.plot_worker)
         plot_button.grid(row=index_row, column=1)
-        
+
     def open_file(self, file_path=None):
-        if file_path==None:
+        if file_path == None:
             file_path = filedialog.askopenfilename(title="Open Parameter File", filetypes=[("TOML files", "*.toml")])
         if file_path:
             try:
                 with open(file_path, "r") as toml_file:
                     params = toml.load(toml_file)['parameters']
-
                     self.sampling_method_var.set(params.get("sampling_method", 2))
                     self.sample_rate_var.set(params.get("sample_rate", 6e6))
                     self.signal_width_var.set(params.get("signal_width", 1e-8))
@@ -153,22 +155,16 @@ class TimeToFrequencyApp:
                     self.start_step_var.set(params.get("start_step", 1))
                     self.simulated_data_var.set(params.get("simulated_data", "out.root"))
                     self.tof_var.set(params.get("TOF", 0))
-                    
-                    # Optionally, you can update your GUI elements with the loaded parameters
-                    # For example, update the Entry widgets or labels accordingly
-                    # entry_sampling_method.delete(0, tk.END)
-                    # entry_sampling_method.insert(0, self.sampling_method_var.get())
-                    # Repeat for other parameters
+                    self.output_var.set(params.get("output", "simulation_result.root"))
                     return True
             except Exception as e:
                 print(f"Error while loading parameters: {e}")
                 return False
-            
+          
     def save_file(self):
         file_path = filedialog.asksaveasfilename(title="Save Parameter File", defaultextension=".toml", filetypes=[("TOML files", "*.toml")])
         if file_path:
             try:
-                # Extract the parameter values from your variables
                 parameters = {
                     'sampling_method': self.sampling_method_var.get(),
                     'sample_rate': self.sample_rate_var.get(),
@@ -180,25 +176,27 @@ class TimeToFrequencyApp:
                     'plot_fre_min': self.plot_fre_min_var.get(),
                     'plot_fre_max': self.plot_fre_max_var.get(),
                     'simulated_data': self.simulated_data_var.get(),
-                    'TOF': self.tof_var.get()
+                    'TOF': self.tof_var.get(),
+                    'output': self.output_var.get()
                 }
-    
-                # Save parameters to the TOML file
                 with open(file_path, "w") as toml_file:
                     toml.dump({'parameters': parameters}, toml_file)
-    
             except Exception as e:
                 print(f"Error while saving parameters: {e}")
-    
             finally:
                 print("Saved!")
-                
+              
     def run_worker(self):
-        # Update the ROOT plot
-        start_step=1
-        self.converter.run(self.sampling_method_var.get(), self.sample_rate_var.get(), self.signal_width_var.get(), self.noise_level_var.get(),self.plot_opt_var.get(), self.plot_time_min_var.get(), self.plot_time_max_var.get(), self.plot_fre_min_var.get(), self.plot_fre_max_var.get(), start_step, self.simulated_data_var.get(),self.tof_var.get())
-        
+        start_step = 1
+        self.converter.run(int(self.sampling_method_var.get()), self.sample_rate_var.get(), self.signal_width_var.get(),
+                           self.noise_level_var.get(), self.plot_opt_var.get(), self.plot_time_min_var.get(),
+                           self.plot_time_max_var.get(), self.plot_fre_min_var.get(), self.plot_fre_max_var.get(),
+                           start_step, self.simulated_data_var.get(), self.tof_var.get(), self.output_var.get())
+      
     def plot_worker(self):
-        start_step=3
-        self.converter.run(self.sampling_method_var.get(), self.sample_rate_var.get(), self.signal_width_var.get(), self.noise_level_var.get(), self.plot_opt_var.get(), self.plot_time_min_var.get(), self.plot_time_max_var.get(), self.plot_fre_min_var.get(), self.plot_fre_max_var.get(), start_step, self.simulated_data_var.get(),self.tof_var.get())
+        start_step = 3
+        self.converter.run(int(self.sampling_method_var.get()), self.sample_rate_var.get(), self.signal_width_var.get(),
+                           self.noise_level_var.get(), self.plot_opt_var.get(), self.plot_time_min_var.get(),
+                           self.plot_time_max_var.get(), self.plot_fre_min_var.get(), self.plot_fre_max_var.get(),
+                           start_step, self.simulated_data_var.get(), self.tof_var.get(), self.output_var.get())
         print("updated!")

@@ -18,14 +18,14 @@ def load_arguments():
     parser.add_argument('--signal_width', type=float, help='Signal width')
     parser.add_argument('--noise_level', type=float, help='noise level')
     parser.add_argument('--plot_opt', type=int, help='plot option (0, 1, 2) = (no plot/plot only up pannel/ plot up and bottom pannels.)')
-    parser.add_argument('--plot_time_min', type=float, help='Minimum time for plotting')
-    parser.add_argument('--plot_time_max', type=float, help='Maximum time for plotting')
+    parser.add_argument('--plot_time_min', type=float, help='Minimum time for plotting (s)')
+    parser.add_argument('--plot_time_max', type=float, help='Maximum time for plotting (s)')
     parser.add_argument('--plot_fre_min', type=float, help='Minimum frequency for plotting')
     parser.add_argument('--plot_fre_max', type=float, help='Maximum frequency for plotting')
     parser.add_argument('--start_step', type=int, help='start step (1, 2, or 3).')
     parser.add_argument('--SimulatedDataFile', type=str, help='Path to simulated data file')
     parser.add_argument('--TOF', type=int, help='TOF (147, 230, or 16).')
-    parser.add_argument('--OutputDataFile', type=str, help='Path to output data file')
+    parser.add_argument('--Output', type=str, help='Path to output data file (Spectrum.root)')
     args = parser.parse_args()
     return args
 
@@ -35,7 +35,7 @@ def run_command_line_mode(args):
     #args = load_arguments()
     print(args)
     converter = TFC.TimeToFrequencyConverter()
-    converter.run(args.sampling_method, args.sample_rate, args.signal_width, args.noise_level, args.plot_opt, args.plot_time_min, args.plot_time_max, args.plot_fre_min, args.plot_fre_max, args.start_step, args.SimulatedDataFile, args.TOF, args.OutputDataFile)
+    converter.run(args.sampling_method, args.sample_rate, args.signal_width, args.noise_level, args.plot_opt, args.plot_time_min, args.plot_time_max, args.plot_fre_min, args.plot_fre_max, args.start_step, args.SimulatedDataFile, args.TOF, args.Output)
 
 
 def run_gui_mode():
