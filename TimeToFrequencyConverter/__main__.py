@@ -11,15 +11,18 @@ from . import TimeToFrequencyConverter as TFC
 from . import TimeToFrequencyApp as TFApp
 
 def load_arguments():
-    parser = argparse.ArgumentParser(description='TimeToFrequencyConverter. No parameters given, run in GUI mode. e.g. if you type command: $TimeToFrequencyConverter. The program will run in GUI mode. If you type command: $TimeToFrequencyConverter --sampling_method 2 --sample_rate 5e6 --signal_width 1e-8 --noise_level 1e6 --plot_opt 2 --plot_time_min 0 --plot_time_max 5e-3 --plot_fre_min 0 --plot_fre_max 2e6 --start_step 1 --SimulatedDataFile out.root --TOF 147, the program will run in command mode.')
+    parser = argparse.ArgumentParser(description='TimeToFrequencyConverter. No parameters given, run in GUI mode. e.g. if you type command: $TimeToFrequencyConverter. The program will run in GUI mode. If you type command: $TimeToFrequencyConverter --start_step 1 --sampling_method 2 --sample_rate 5e6 --signal_width 1e-8 --noise_level 1e6 --low_freq_hz 240e6 --high_freq_hz 250e6 --plot_opt 2 --plot_time_min 0 --plot_time_max 5e-3 --plot_fre_min 0 --plot_fre_max 2e6 --start_step 1 --SimulatedDataFile out.root --TOF 147, the program will run in command mode.')
     # Define command-line arguments
     parser.add_argument('--sampling_method', type=int, help='Sampling method (1=sine wave or 2=gaussian)')
     parser.add_argument('--sample_rate', type=float, help='Sampling rate in Hertz')
     parser.add_argument('--signal_width', type=float, help='Signal width')
     parser.add_argument('--noise_level', type=float, help='noise level')
+    parser.add_argument('--low_freq_hz', type=float, help='low_freq_hz')
+    parser.add_argument('--high_freq_hz', type=float, help='high_freq_hz')
     parser.add_argument('--plot_opt', type=int, help='plot option (0, 1, 2) = (no plot/plot only up pannel/ plot up and bottom pannels.)')
     parser.add_argument('--plot_time_min', type=float, help='Minimum time for plotting (s)')
     parser.add_argument('--plot_time_max', type=float, help='Maximum time for plotting (s)')
+    parser.add_argument('--frame_length_seconds', type=float, help='time of one frame (s)')
     parser.add_argument('--plot_fre_min', type=float, help='Minimum frequency for plotting')
     parser.add_argument('--plot_fre_max', type=float, help='Maximum frequency for plotting')
     parser.add_argument('--start_step', type=int, help='start step (1, 2, or 3).')
@@ -35,7 +38,7 @@ def run_command_line_mode(args):
     #args = load_arguments()
     print(args)
     converter = TFC.TimeToFrequencyConverter()
-    converter.run(args.sampling_method, args.sample_rate, args.signal_width, args.noise_level, args.plot_opt, args.plot_time_min, args.plot_time_max, args.plot_fre_min, args.plot_fre_max, args.start_step, args.SimulatedDataFile, args.TOF, args.Output)
+    converter.run(args.sampling_method, args.sample_rate, args.signal_width, args.noise_level,args.low_freq_hz,args.high_freq_hz, args.plot_opt, args.plot_time_min, args.plot_time_max,args.frame_length_seconds, args.plot_fre_min, args.plot_fre_max, args.start_step, args.SimulatedDataFile, args.TOF, args.Output)
 
 
 def run_gui_mode():
